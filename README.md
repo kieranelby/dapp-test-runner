@@ -3,19 +3,30 @@ Ethereum DApp Test Runner, tool to check Ethereum contracts work as expected.
 
 ## About
 
-TODO
+There are better general-purpose Javascript test runners out there (like [mocha.js](/mochajs/mocha)),
+but dapp-test-runner helps you write tests for your Ethereum contracts by making it easy to:
+ * wait for transactions from one test step to be mined before starting the next step of the test;
+ * keep tests independent by creating fresh contract instances and test accounts;
+ * run multiple tests in parallel (useful since waiting for blocks can take a while);
+ * make assertions about Wei amounts;
+ * create test accounts, send ether to them, and sweep it back again afterwards;
+ * produce a test report you can include with your DApp to show it has been tested;
+ * measure test coverage using the Ethereum Virtual Machine.
 
 ## Requirements
 
- * node.js
- * geth Ethereum node running on testnet
- * an Ethereum account with some ether
- * solc solidity compiler
- * the source of the contract you want to test
+ * node.js;
+ * geth Ethereum node running on testnet with some ether;
+ * solc solidity compiler;
+ * the source of the contract you want to test.
+
+## Example
+
+TODO - link to the King of the Ether Throne once got it working ...
 
 ## Tutorial
 
-Let's suppose you want to test this Solidity contract ([Auction.sol](../examples/Auction.sol)) which implements a simple auction:
+Let's suppose you want to test this Solidity contract ([Auction.sol](/kieranelby/dapp-test-runner/blob/master/examples/Auction.sol)) which implements a simple auction:
 
 ```
 contract Auction {
@@ -70,7 +81,7 @@ contract Auction {
 }
 ```
 
-Create a Javascript file for your tests ([test-auction.js](../examples/test-auction.js), say). Start by creating a new dapp-test-runner like this:
+Create a Javascript file for your tests ([test-auction.js](/kieranelby/dapp-test-runner/blob/master/examples/test-auction.js), say). Start by creating a new dapp-test-runner like this:
 
 ```javascript
 var DAppTestRunner = require('dapp-test-runner');
