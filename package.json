@@ -1,94 +1,44 @@
 {
   "name": "dapp-test-runner",
   "namespace": "ethereum",
-  "version": "0.15.2",
-  "description": "Ethereum DApp Test Runner, tool to check Ethereum contracts work as expected",
+  "version": "0.0.1",
+  "description": "Ethereum DApp Test Runner, a tool to check Ethereum contracts work as you expect",
   "main": "./index.js",
   "directories": {
     "lib": "./lib"
   },
   "dependencies": {
-    "bignumber.js": "github:debris/bignumber.js#master",
-    "web3": "*"
+    "web3": "0.15.3"
   },
   "devDependencies": {
-    "jshint": ">=2.5.0"
+    "jshint": "2.5.0"
   },
   "scripts": {
-    "lint": "jshint *.js lib"
+    "lint": "jshint index.js lib"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/web3.js.git"
+    "url": "git+https://github.com/kieranelby/dapp-test-runner"
   },
-  "homepage": "https://github.com/ethereum/web3.js",
+  "homepage": "https://github.com/kieranelby/dapp-test-runner",
   "bugs": {
-    "url": "https://github.com/ethereum/web3.js/issues"
+    "url": "https://github.com/kieranelby/dapp-test-runner/issues"
   },
   "keywords": [
     "ethereum",
     "javascript",
-    "API"
+    "dapp",
+    "contract",
+    "runner",
+    "test",
+    "testing"
   ],
-  "author": {
-    "name": "ethdev.com"
-  },
   "authors": [
     {
-      "name": "Marek Kotewicz",
-      "email": "marek@ethdev.com",
-      "url": "https://github.com/debris"
-    },
-    {
-      "name": "Fabian Vogelsteller",
-      "email": "fabian@ethdev.com",
-      "homepage": "http://frozeman.de"
-    },
-    {
-      "name": "Marian Oancea",
-      "email": "marian@ethdev.com",
-      "url": "https://github.com/cubedro"
-    },
-    {
-      "name": "Gav Wood",
-      "email": "g@ethdev.com",
-      "homepage": "http://gavwood.com"
-    },
-    {
-      "name": "Jeffery Wilcke",
-      "email": "jeff@ethdev.com",
-      "url": "https://github.com/obscuren"
+      "name": "Kieran Elby",
+      "email": "kieran@dunelm.org.uk",
+      "url": "https://github.com/kieranelby"
     }
   ],
-  "license": "LGPL-3.0",
-  "gitHead": "dc12e9b6cb01c65ded39bdb155f42f801b1bc1b8",
-  "_id": "web3@0.15.2",
-  "_shasum": "4ecfcc997094c2f638d7eaa84f1fcc5d57a8e74c",
-  "_from": "web3@0.15.2",
-  "_npmVersion": "2.14.12",
-  "_nodeVersion": "4.2.4",
-  "_npmUser": {
-    "name": "frozeman",
-    "email": "fabian@frozeman.de"
-  },
-  "dist": {
-    "shasum": "4ecfcc997094c2f638d7eaa84f1fcc5d57a8e74c",
-    "tarball": "http://registry.npmjs.org/web3/-/web3-0.15.2.tgz"
-  },
-  "maintainers": [
-    {
-      "name": "debris",
-      "email": "marek.kotewicz@gmail.com"
-    },
-    {
-      "name": "frozeman",
-      "email": "fabian@frozeman.de"
-    }
-  ],
-  "_npmOperationalInternal": {
-    "host": "packages-5-east.internal.npmjs.com",
-    "tmp": "tmp/web3-0.15.2.tgz_1455282834660_0.52377775660716"
-  },
-  "_resolved": "https://registry.npmjs.org/web3/-/web3-0.15.2.tgz",
-  "readme": "ERROR: No README data found!"
+  "license": "MIT"
 }

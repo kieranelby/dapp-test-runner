@@ -1,5 +1,5 @@
 # dapp-test-runner
-Ethereum DApp Test Runner, tool to check Ethereum contracts work as expected.
+Ethereum DApp Test Runner, a tool to check Ethereum contracts work as you expect.
 
 ## About
 
@@ -20,13 +20,11 @@ but dapp-test-runner helps you write tests for your Ethereum contracts by making
  * solc solidity compiler;
  * the source of the contract you want to test.
 
-## Example
-
-TODO - link to the King of the Ether Throne once got it working ...
-
 ## Tutorial
 
-Let's suppose you want to test this Solidity contract ([Auction.sol](/kieranelby/dapp-test-runner/blob/master/examples/Auction.sol)) which implements a simple auction:
+### Getting Started
+
+Let's suppose you want to test this Solidity contract ([Auction.sol](/kieranelby/dapp-test-runner-examples/blob/master/Auction.sol)) which implements a simple auction:
 
 ```
 contract Auction {
@@ -81,7 +79,7 @@ contract Auction {
 }
 ```
 
-Create a Javascript file for your tests ([test-auction.js](/kieranelby/dapp-test-runner/blob/master/examples/test-auction.js), say). Start by creating a new dapp-test-runner like this:
+Create a Javascript file for your tests ([test-auction.js](/kieranelby/dapp-test-runner-examples/blob/master/test-auction.js), say). Start by creating a new dapp-test-runner like this:
 
 ```javascript
 var DAppTestRunner = require('dapp-test-runner');
@@ -99,11 +97,24 @@ runner.registerSolidityContracts(auctionContractSource);
 Now let's create our first test.
 
 ```javascript
+// Our first test.
 runner.addTest({
-	title: 'Create Auction',
+	title: 'New Auction has expected properties',
 	steps: [
 	  function(helper) {
-	  	this.auction = helper.createContractInstance('Auction');
+	    // Given a newly created one-hour auction on behalf of a particular beneficiary
+	    this.beneficiary = helper.account.create();
+	    this.biddingTime = 60 * 60;
+	  	this.auction = helper.createContractInstance(
+	  	  'Auction', [this.beneficiary, this.biddingTime]);
+	  },
+	  function(helper) {
+	    // When we examine the properties of the auction
+	    // Then they look as expected:
+	    helper.math.assertEqual(0, this.auction.highestBid(),
+	      'highest bid should be zero for a new auction');
+	    helper.math.assertEqual(0, this.auction.highestBid(),
+	      'highest bid should be zero for a new auction');
 	  }
 	]
 });
@@ -112,7 +123,7 @@ runner.addTest({
 Add a final line to your test-auction.js file to actually run the tests:
 
 ```javascript
-runner.run('test-action-report.html');
+runner.run('test-auction-report.html');
 ```
 
 Let's try it out:
@@ -121,3 +132,14 @@ Let's try it out:
 node test-auction.js
 ```
 
+### Common Problems Running the Runner
+
+
+### Adding Some More Interesting Tests
+
+
+### Reporting
+
+## Real World Example
+
+TODO - link to the King of the Ether Throne once got it working ...
