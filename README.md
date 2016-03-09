@@ -1,9 +1,9 @@
 # dapp-test-runner
-Ethereum DApp Test Runner, a tool to check Ethereum contracts work as you expect.
+dapp-test-runner is a tool to check Ethereum contracts work as you expect.
 
 ## About
 
-There are better general-purpose Javascript test runners out there (like [mocha.js](/mochajs/mocha)),
+There are better general-purpose Javascript test runners out there (such as [mocha.js](/mochajs/mocha)),
 but dapp-test-runner helps you write tests for your Ethereum contracts by making it easy to:
  * keep tests independent by creating fresh contract instances and test accounts;
  * wait for transactions from one test step to be mined before starting the next step of the test (without getting into callback hell);
@@ -147,10 +147,10 @@ fs.writeFileSync('test-auction-report.html', results.getHtmlReport(), 'utf8');
 
 Let's try it out.
 
-First, start geth on the testnet with the extra RPC APIs enabled:
+First, start eth/geth running on the testnet with the extra RPC APIs enabled, on the port dapp-test-runner expects (8646), and with the master account unlocked:
 
 ```
-TODO
+geth --testnet --rpc --rpcport 8646 --rpcapi "eth,web3,personal" --unlock 0
 ```
 
 Then run your tests with:
@@ -159,9 +159,20 @@ Then run your tests with:
 node test-auction.js
 ```
 
+It will log what it is doing to the console. Here's what the report should look like if it all works: [test-auction-report.html](/kieranelby/dapp-test-runner-examples/blob/master/test-auction-report.html).
+
 ## Troubleshooting Common Problems
 
-TODO
+TODO ...
+
+- not enough ether
+- master account not unlocked
+- personal api not available via RPC
+- testnet not sync-ed
+- transactions not being mined
+- contract not usable until next step
+- account not funded until next step
+- not enough gas
 
 ## Real World Example
 
@@ -221,29 +232,38 @@ Most helper functions that generate an Ethereum transaction "do the right thing"
 
 If you need to, you can control when the next step is allowed to start using the helper.nextStep functions:
 
-Helper.backOff.untilBlockTime()
-Helper.backOff.untilTxnMined()
-Helper.backOff.untilPredicate()
+- [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.nextStep.md)
+- [`helper.nextStep.needsBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
+- [`helper.nextStep.needsClockTime(jsDate)`](docs/helper.nextStep.md)
+- [`helper.nextStep.needsPredicate(predicateFn)`](docs/helper.nextStep.md)
 
-Helper.nextStep.needsBlockTime(posixTime)
-Helper.nextStep.needsTxnMined(txnHash)
+It is also possible to achieve a similar effect with the helper.backOff functions - these cause the current step to stop and retry itself later:
 
-It is also possible to achieve a similar effect with the helper.backOff functions - these cause the current step to stop and retry itself later. Normally a call to helper.backOff should be the first line of the test step.
+- [`helper.backOff.untilTxnMined(txnHash)`](docs/helper.nextStep.md)
+- [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
+- [`helper.backOff.untilClockTime(jsDate)`](docs/helper.nextStep.md)
+- [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.nextStep.md)
 
-For example,...
+Normally a call to helper.backOff should be the first line of the test step.
 
-You can set a time-out on a specific test with ???.
+For example, ... TODO ...
+
+You can set a time-out on a specific test by specifying a `completionTimeoutSeconds` property on the test object you pass to `runner.addTest(testObj)`.
+
+### Built-in Contracts
+
+dapp-test-runner includes
 
 ## API Documentation
 
 ### Runner API Index
 
 - [`var runner = new DAppTestRunner(suiteName)`](docs/runner.md)
-- [`runner.setWeb3RpcUrl(web3RpcUrl)`(docs/runner.md)
-- [`runner.setMasterAccountPassphrase(passphrase)`(docs/runner.md)
+- [`runner.setWeb3RpcUrl(web3RpcUrl)`](docs/runner.md)
+- [`runner.setMasterAccountPassphrase(passphrase)`](docs/runner.md)
 - [`runner.addTest(testObject)`](docs/runner.md)
 - [`runner.registerContract(contractName, contractAbi, contractBytecode)`](docs/runner.md)
-- [`runner.registerSolidityContract(soliditySourceCode);`](docs/runner.md)
+- [`runner.registerSolidityContract(soliditySourceCode)`](docs/runner.md)
 - [`var results = runner.run()`](docs/runner.md)
 
 ### Results API Index
@@ -258,23 +278,31 @@ You can set a time-out on a specific test with ???.
 
 ### Test Helper API Index
 
+#### Accounts
+
 - [`var address = helper.account.create()`](docs/helper.account.md)
 - [`var address = helper.account.createWithJustOver(weiAmount)`](docs/helper.account.md)
 - [`var address = helper.account.master`](docs/helper.account.md)
 - [`var weiAmount = helper.account.balance(address)`](docs/helper.account.md)
 
+#### Contracts
 
 - [`var contract = helper.contract.createInstance(name, paramsArray, transactionObj)`](docs/helper.contract.md)
 
+#### Maths
 
 - [`var ethAmount = helper.fromWei(weiAmount, toUnit)`](docs/helper.math.md)
 - [`var weiAmount = helper.toWei(amount, fromUnit)`](docs/helper.math.md)
-
-
 - [`var bigNum = helper.math.toNum('numericValue')`](docs/helper.math.md)
 - [`var sign = helper.math.cmp(numericValueA, numericValueB)`](docs/helper.math.md)
 - [`var answerBigNum = helper.math.add(numericValueA, numericValueB)`](docs/helper.math.md)
 - [`var answerBigNum = helper.math.subtract(numericValueA, numericValueB)`](docs/helper.math.md)
+
+#### Assertions
+
+- [`helper.assert.fail(message)`](docs/helper.assert.md)
+- [`helper.assert.true(condition, message)`](docs/helper.assert.md)
+- [`helper.assert.equal(expectedValue, actualValue, message)`](docs/helper.assert.md)
 - [`helper.math.assertEqual(expectedNumericValue, actualNumericValue, message)`](docs/helper.math.md)
 - [`helper.math.assertLessThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
 - [`helper.math.assertGreaterThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
@@ -282,11 +310,7 @@ You can set a time-out on a specific test with ???.
 - [`helper.math.assertGreaterThanOrEqual(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
 - [`helper.math.assertRoughlyEqual(expectedNumericValue, actualNumericValue, withinDelta, message)`](docs/helper.math.md)
 
-
-- [`helper.assert.fail(message)`](docs/helper.assert.md)
-- [`helper.assert.true(condition, message)`](docs/helper.assert.md)
-- [`helper.assert.equal(expectedValue, actualValue, message)`](docs/helper.assert.md)
-
+#### Waiting
 
 - [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.nextStep.md)
 - [`helper.nextStep.needsBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
@@ -297,9 +321,9 @@ You can set a time-out on a specific test with ???.
 - [`helper.backOff.untilClockTime(jsDate)`](docs/helper.nextStep.md)
 - [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.nextStep.md)
 
+#### Unsupported
 
 - [`helper.unsupported.web3`](docs/helper.misc.md)
-
 
 ### Test Object API Index
 
@@ -308,10 +332,9 @@ You can set a time-out on a specific test with ???.
 - [`cleanup`](docs/testObj.md)
 - [`completionTimeoutSeconds`](docs/testObj.md)
 
-
 ### Contract Object API Index
 
-TODO ... explain a bit about how these work (same as web3.eth basically)
+TODO ... explain a bit about how these work (same as web3.eth basically).
 
 ### Transaction Object API Index
 
