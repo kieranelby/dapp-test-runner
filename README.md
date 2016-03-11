@@ -141,8 +141,10 @@ runner.addTest({
 Add a final line to your test-auction.js file to actually run the tests and write a report:
 
 ```javascript
-var results = runner.run();
-fs.writeFileSync('test-auction-report.html', results.getHtmlReport(), 'utf8');
+// Run the tests.
+runner.run(function (results) {
+  fs.writeFileSync('test-auction-report.html', results.getHtmlReport(), 'utf-8');
+});
 ```
 
 Let's try it out.
@@ -250,24 +252,28 @@ For example, ... TODO ...
 
 You can set a time-out on a specific test by specifying a `completionTimeoutSeconds` property on the test object you pass to `runner.addTest(testObj)`.
 
-### Understanding test scope, test parallelism, sharing information, and run setup and cleanup.
+### Understanding test scope, test parallelism, sharing information, and setup and cleanup.
 
 dapp-test-runner encourages you to keep your tests independent. Each test is expected to create its own accounts and contract instances.
 
 Test steps can save information to use in the next step by assigning to properties of the `this` variable, which refers to the test object.
 
-To-do - example
+To-do - good example of a test using info from one step in next step
 
 Test steps must avoid storing information outside the test object since:
 
 - dapp-test-runner will likely run tests in a different order depending on how quickly each transaction gets mined, which will NOT be the order they appear in your javascript file;
 - dapp-test-runner will likely re-use accounts or remove funds from accounts once the test that created the account has finished, which is unlikely to end well if you've saved the account in a module / global variable and are planning to use it from another test.
 
-To-do - example
+`runner.disableParallelism()` can be a handy temporary measure to see if a problem goes away when you force dapp-test-runner to run tests one at a time.
+
+To-do - bad example of two or more tests with hidden dependencies
 
 If you do need to share information between tests, the recommended way is to create the information in a setup function registered with `runner.addRunSetupFunction(runSetupFunction)`. The run setup function will be called by the runner when `runner.run()` is called, before any of the tests start running.
 
 Your setup function will be passed a "run helper" object. The run helper has the same properties and methods as the helper objects passed to the test step functions. However, unlike a normal helper, any accounts and contract instances created via the run helper will remain valid for the duration of the entire run.
+
+To-do - run setup example.
 
 Use `runner.addRunCleanupFunction(runCleanupFunction)` to register a run cleanup function to be run after all the tests finish. Individual tests can have cleanup functions too - just set a property called `cleanup` on the testObject passed to `runner.addTest(testObj)`.
 
@@ -275,11 +281,20 @@ dapp-test-runner may or may not share the same ethereum web3 instance between te
 
 ### Built-in Contracts
 
-dapp-test-runner includes
+dapp-test-runner includes some Ethereum contracts that simulate scenarios that can occur. These include:
+
+- DTR.ExpensiveWallet
+- DTR.Poison
+
+You can create these from a test with [`helper.txn.createContractInstance(name, paramsArray, transactionObj)`](docs/helper.txn.md) just like your own contracts.
 
 ## API Documentation
 
 ### Runner API Index
+
+The runner object is your starting point for interaction with dapp-test-runner. `require('dapp-test-runner')` will give you the DAppTestRunner constructor you use to get a runner object.
+
+Use the runner object to register contracts and add tests, then to run the tests.
 
 - [`var runner = new DAppTestRunner(runnerName)`](docs/runner.md)
 - [`runner.setWeb3RpcUrl(web3RpcUrl)`](docs/runner.md)
@@ -290,19 +305,23 @@ dapp-test-runner includes
 - [`runner.addRunSetupFunction(runSetupFunction)`](docs/runner.md)
 - [`runner.addRunCleanupFunction(runCleanupFunction)`](docs/runner.md)
 - [`runner.addTest(testObject)`](docs/runner.md)
-- [`var results = runner.run()`](docs/runner.md)
+- [`runner.run(runCompletedFunction)`](docs/runner.md)
 
 ### Results API Index
 
-- [`var results = runner.run();`](docs/results.md)
+A results object is passed to the runCompletedFunction you gave to `runner.run(runCompletedFunction)`. It tells you whether the tests passed.
+
 - [`results.allPassed`](docs/results.md)
 - [`results.skippedCount`](docs/results.md)
 - [`results.failedCount`](docs/results.md)
 - [`results.passedCount`](docs/results.md)
-- [`results.computeCoverage()`](docs/results.md)
-- [`var html = results.getHtmlReport();`](docs/results.md)
+- [`results.getHtmlReport();`](docs/results.md)
 
 ### Test Helper API Index
+
+A test helper object is passed to each step of each of your tests. This object provides almost everything you need during the execution of a test.
+
+Use the helper to create Ethereum accounts and contracts, to check amounts, to send transactions, and to make assertions.
 
 #### Accounts
 
@@ -322,8 +341,8 @@ dapp-test-runner includes
 
 - [`var ethAmount = helper.math.fromWei(weiAmount, toUnit)`](docs/helper.math.md)
 - [`var weiAmount = helper.math.toWei(amount, fromUnit)`](docs/helper.math.md)
-- [`var bigNum = helper.math.toNum('numericValue')`](docs/helper.math.md)
-- [`var sign = helper.math.cmp(numericValueA, numericValueB)`](docs/helper.math.md)
+- [`var bigNum = helper.math.toNumber('numericValue')`](docs/helper.math.md)
+- [`var sign = helper.math.compare(numericValueA, numericValueB)`](docs/helper.math.md)
 - [`var answerBigNum = helper.math.add(numericValueA, numericValueB)`](docs/helper.math.md)
 - [`var answerBigNum = helper.math.subtract(numericValueA, numericValueB)`](docs/helper.math.md)
 
@@ -363,10 +382,13 @@ TODO ... explain a bit about how these work (same as web3.eth basically).
 
 ### Transaction Object API Index
 
+Several functions accept a transaction object from you with the following properties:
+
 - [`from`](docs/txnObj.md)
 - [`to`](docs/txnObj.md)
 - [`value`](docs/txnObj.md)
 - [`data`](docs/txnObj.md)
+- [`gas`](docs/txnObj.md)
 
 ## Future Directions
 
