@@ -83,7 +83,7 @@ Start by creating a new dapp-test-runner like this:
 
 ```javascript
 var DAppTestRunner = require('dapp-test-runner');
-var runner = new DAppTestRunner('Auction Test Suite');
+var runner = new DAppTestRunner('Auction Tests');
 var fs = require('fs'); // we'll need this later to read/write files
 ```
 
@@ -250,6 +250,29 @@ For example, ... TODO ...
 
 You can set a time-out on a specific test by specifying a `completionTimeoutSeconds` property on the test object you pass to `runner.addTest(testObj)`.
 
+### Understanding test scope, test parallelism, sharing information, and run setup and cleanup.
+
+dapp-test-runner encourages you to keep your tests independent. Each test is expected to create its own accounts and contract instances.
+
+Test steps can save information to use in the next step by assigning to properties of the `this` variable, which refers to the test object.
+
+To-do - example
+
+Test steps must avoid storing information outside the test object since:
+
+- dapp-test-runner will likely run tests in a different order depending on how quickly each transaction gets mined, which will NOT be the order they appear in your javascript file;
+- dapp-test-runner will likely re-use accounts or remove funds from accounts once the test that created the account has finished, which is unlikely to end well if you've saved the account in a module / global variable and are planning to use it from another test.
+
+To-do - example
+
+If you do need to share information between tests, the recommended way is to create the information in a setup function registered with `runner.addRunSetupFunction(runSetupFunction)`. The run setup function will be called by the runner when `runner.run()` is called, before any of the tests start running.
+
+Your setup function will be passed a "run helper" object. The run helper has the same properties and methods as the helper objects passed to the test step functions. However, unlike a normal helper, any accounts and contract instances created via the run helper will remain valid for the duration of the entire run.
+
+Use `runner.addRunCleanupFunction(runCleanupFunction)` to register a run cleanup function to be run after all the tests finish. Individual tests can have cleanup functions too - just set a property called `cleanup` on the testObject passed to `runner.addTest(testObj)`.
+
+dapp-test-runner may or may not share the same ethereum web3 instance between tests and between steps - avoid relying on this. Changes made to the `web3.eth.defaultAccount` property from within a test step will be undone at the end of current test step.
+
 ### Built-in Contracts
 
 dapp-test-runner includes
@@ -258,12 +281,15 @@ dapp-test-runner includes
 
 ### Runner API Index
 
-- [`var runner = new DAppTestRunner(suiteName)`](docs/runner.md)
+- [`var runner = new DAppTestRunner(runnerName)`](docs/runner.md)
 - [`runner.setWeb3RpcUrl(web3RpcUrl)`](docs/runner.md)
 - [`runner.setMasterAccountPassphrase(passphrase)`](docs/runner.md)
-- [`runner.addTest(testObject)`](docs/runner.md)
+- [`runner.disableParallelism()`](docs/runner.md)
 - [`runner.registerContract(contractName, contractAbi, contractBytecode)`](docs/runner.md)
 - [`runner.registerSolidityContract(soliditySourceCode)`](docs/runner.md)
+- [`runner.addRunSetupFunction(runSetupFunction)`](docs/runner.md)
+- [`runner.addRunCleanupFunction(runCleanupFunction)`](docs/runner.md)
+- [`runner.addTest(testObject)`](docs/runner.md)
 - [`var results = runner.run()`](docs/runner.md)
 
 ### Results API Index
@@ -283,16 +309,19 @@ dapp-test-runner includes
 - [`var address = helper.account.create()`](docs/helper.account.md)
 - [`var address = helper.account.createWithJustOver(weiAmount)`](docs/helper.account.md)
 - [`var address = helper.account.master`](docs/helper.account.md)
-- [`var weiAmount = helper.account.balance(address)`](docs/helper.account.md)
+- [`var weiAmount = helper.account.getBalance(address)`](docs/helper.account.md)
 
-#### Contracts
+### Contracts and Transactions
 
-- [`var contract = helper.contract.createInstance(name, paramsArray, transactionObj)`](docs/helper.contract.md)
+- [`var contract = helper.txn.createContractInstance(name, paramsArray, transactionObj)`](docs/helper.txn.md)
+- [`var txnHash = helper.txn.send(transactionObj)`](docs/helper.txn.md)
+- [`helper.txn.rawWeb3`](docs/helper.txn.md)
+- [`helper.txn.recordOtherTransaction(txnHash)`](docs/helper.txn.md)
 
 #### Maths
 
-- [`var ethAmount = helper.fromWei(weiAmount, toUnit)`](docs/helper.math.md)
-- [`var weiAmount = helper.toWei(amount, fromUnit)`](docs/helper.math.md)
+- [`var ethAmount = helper.math.fromWei(weiAmount, toUnit)`](docs/helper.math.md)
+- [`var weiAmount = helper.math.toWei(amount, fromUnit)`](docs/helper.math.md)
 - [`var bigNum = helper.math.toNum('numericValue')`](docs/helper.math.md)
 - [`var sign = helper.math.cmp(numericValueA, numericValueB)`](docs/helper.math.md)
 - [`var answerBigNum = helper.math.add(numericValueA, numericValueB)`](docs/helper.math.md)
@@ -301,14 +330,14 @@ dapp-test-runner includes
 #### Assertions
 
 - [`helper.assert.fail(message)`](docs/helper.assert.md)
-- [`helper.assert.true(condition, message)`](docs/helper.assert.md)
+- [`helper.assert.isTrue(condition, message)`](docs/helper.assert.md)
 - [`helper.assert.equal(expectedValue, actualValue, message)`](docs/helper.assert.md)
-- [`helper.math.assertEqual(expectedNumericValue, actualNumericValue, message)`](docs/helper.math.md)
+- [`helper.math.assertEqual(expectedNumericValue, actualNumericValue, message)`](docs/helper.assert.md)
+- [`helper.math.assertRoughlyEqual(expectedNumericValue, actualNumericValue, withinDelta, message)`](docs/helper.math.md)
 - [`helper.math.assertLessThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
 - [`helper.math.assertGreaterThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
 - [`helper.math.assertLessThanOrEqual(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
 - [`helper.math.assertGreaterThanOrEqual(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
-- [`helper.math.assertRoughlyEqual(expectedNumericValue, actualNumericValue, withinDelta, message)`](docs/helper.math.md)
 
 #### Waiting
 
@@ -320,10 +349,6 @@ dapp-test-runner includes
 - [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
 - [`helper.backOff.untilClockTime(jsDate)`](docs/helper.nextStep.md)
 - [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.nextStep.md)
-
-#### Unsupported
-
-- [`helper.unsupported.web3`](docs/helper.misc.md)
 
 ### Test Object API Index
 
@@ -342,3 +367,13 @@ TODO ... explain a bit about how these work (same as web3.eth basically).
 - [`to`](docs/txnObj.md)
 - [`value`](docs/txnObj.md)
 - [`data`](docs/txnObj.md)
+
+## Future Directions
+
+Planned but not yet implemented features include:
+
+- measuring code coverage (using VM traces);
+- running from browser as well as node.js;
+- helping test javascript contract interface code that uses callbacks;
+- helping test contract "logs" (aka solidity "events");
+- (possibly) offering a hosted CI solution (a tiny bit like https://travis-ci.org/).
