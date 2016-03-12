@@ -11,11 +11,11 @@ but dapp-test-runner helps you write tests for your Ethereum contracts by making
  * perform artihmetic and assertions about Wei amounts;
  * create test accounts, send ether to them, and automatically sweep the ether back again afterwards;
  * produce a test report you can include with your DApp to show it has been tested;
- * measure test coverage using the Ethereum Virtual Machine (coming soon).
+ * measure test coverage using the Ethereum Virtual Machine (coming soon!).
 
 ## Requirements
 
- * node.js (for now - browser compatibility coming soon);
+ * node.js (for now - browser compatibility coming soon!);
  * eth or geth Ethereum node running on testnet with some ether;
  * the solidity source code or the bytecode for the contract you want to test;
  * solc solidity compiler (if you want to use solidity source code).
@@ -143,7 +143,7 @@ Add a final line to your test-auction.js file to actually run the tests and writ
 ```javascript
 // Run the tests.
 runner.run(function (results) {
-  fs.writeFileSync('test-auction-report.html', results.getHtmlReport(), 'utf-8');
+  fs.writeFileSync('test-auction-report.md', results.getMarkdownReport(), 'utf-8');
 });
 ```
 
@@ -315,11 +315,12 @@ Use the runner object to register contracts and add tests, then to run the tests
 
 A results object is passed to the runCompletedFunction you gave to `runner.run(runCompletedFunction)`. It tells you whether the tests passed.
 
-- [`results.allPassed`](docs/results.md)
+- [`results.anyFailed`](docs/results.md)
+- [`results.addedCount`](docs/results.md)
 - [`results.skippedCount`](docs/results.md)
 - [`results.failedCount`](docs/results.md)
 - [`results.passedCount`](docs/results.md)
-- [`results.getHtmlReport();`](docs/results.md)
+- [`results.getMarkdownReport();`](docs/results.md)
 
 ### Test Helper API Index
 
@@ -381,10 +382,16 @@ Use the helper to create Ethereum accounts and contracts, to check amounts, to s
 
 ### Test Object API Index
 
+The test object you pass to [`runner.addTest(testObject)`](docs/runner.md) can have the following properties:
+
 - [`title`](docs/testObj.md)
 - [`steps`](docs/testObj.md)
 - [`cleanup`](docs/testObj.md)
+- [`ignore`](docs/testObj.md)
+- [`categories`](docs/testObj.md)
 - [`completionTimeoutSeconds`](docs/testObj.md)
+
+Only `title` and `steps` are essential; the others can be left out.
 
 ### Contract Object API Index
 
@@ -392,13 +399,15 @@ TODO ... explain a bit about how these work (same as web3.eth basically).
 
 ### Transaction Object API Index
 
-Several functions accept a transaction object from you with the following properties:
+Several functions accept a transaction object from you which can have the following properties:
 
 - [`from`](docs/txnObj.md)
 - [`to`](docs/txnObj.md)
 - [`value`](docs/txnObj.md)
 - [`data`](docs/txnObj.md)
 - [`gas`](docs/txnObj.md)
+
+To-do - example.
 
 ## Future Directions
 
