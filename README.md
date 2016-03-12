@@ -234,17 +234,19 @@ Most helper functions that generate an Ethereum transaction "do the right thing"
 
 If you need to, you can control when the next step is allowed to start using the helper.nextStep functions:
 
-- [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.nextStep.md)
-- [`helper.nextStep.needsBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
-- [`helper.nextStep.needsClockTime(jsDate)`](docs/helper.nextStep.md)
-- [`helper.nextStep.needsPredicate(predicateFn)`](docs/helper.nextStep.md)
+- [`helper.nextStep.needsBlockTime(blockTimestamp)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsClockTime(jsDate)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsPredicate(predicateFn)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
 
 It is also possible to achieve a similar effect with the helper.backOff functions - these cause the current step to stop and retry itself later:
 
-- [`helper.backOff.untilTxnMined(txnHash)`](docs/helper.nextStep.md)
-- [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
-- [`helper.backOff.untilClockTime(jsDate)`](docs/helper.nextStep.md)
-- [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.nextStep.md)
+- [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.waiting.md)
+- [`helper.backOff.untilClockTime(jsDate)`](docs/helper.waiting.md)
+- [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.waiting.md)
+- [`helper.backOff.untilTxnMined(txnHash)`](docs/helper.waiting.md)
+- [`helper.backOff.untilContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
 
 Normally a call to helper.backOff should be the first line of the test step.
 
@@ -286,9 +288,11 @@ dapp-test-runner includes some Ethereum contracts that simulate scenarios that c
 - DTR.ExpensiveWallet
 - DTR.Poison
 
-You can create these from a test with [`helper.txn.createContractInstance(name, paramsArray, transactionObj)`](docs/helper.txn.md) just like your own contracts.
+You can create these from a test with [`helper.txn.createContractInstance(name, paramsArray, transactionObj)`](docs/helper.txns.md) just like your own contracts.
 
 ## API Documentation
+
+Only functions and properties documented here are intended to be used by tests - any other functions are for internal use by the dapp-test-runner (e.g. ones starting with an underscore).
 
 ### Runner API Index
 
@@ -325,49 +329,55 @@ Use the helper to create Ethereum accounts and contracts, to check amounts, to s
 
 #### Accounts
 
-- [`var address = helper.account.create()`](docs/helper.account.md)
-- [`var address = helper.account.createWithJustOver(weiAmount)`](docs/helper.account.md)
-- [`var address = helper.account.master`](docs/helper.account.md)
-- [`var weiAmount = helper.account.getBalance(address)`](docs/helper.account.md)
+- [`var address = helper.account.create()`](docs/helper.accounts.md)
+- [`var address = helper.account.createWithJustOver(weiAmount)`](docs/helper.accounts.md)
+- [`var address = helper.account.master`](docs/helper.accounts.md)
+- [`var weiAmount = helper.account.getBalance(address)`](docs/helper.accounts.md)
 
 ### Contracts and Transactions
 
-- [`var contract = helper.txn.createContractInstance(name, paramsArray, transactionObj)`](docs/helper.txn.md)
-- [`var txnHash = helper.txn.send(transactionObj)`](docs/helper.txn.md)
-- [`helper.txn.rawWeb3`](docs/helper.txn.md)
-- [`helper.txn.recordOtherTransaction(txnHash)`](docs/helper.txn.md)
+- [`var contract = helper.txn.createContractInstance(name, paramsArray, transactionObj)`](docs/helper.txns.md)
+- [`var txnHash = helper.txn.send(transactionObj)`](docs/helper.txns.md)
+- [`helper.txn.rawWeb3`](docs/helper.txns.md)
+- [`helper.txn.recordOtherTransaction(txnHash)`](docs/helper.txns.md)
 
 #### Maths
 
-- [`var ethAmount = helper.math.fromWei(weiAmount, toUnit)`](docs/helper.math.md)
-- [`var weiAmount = helper.math.toWei(amount, fromUnit)`](docs/helper.math.md)
-- [`var bigNum = helper.math.toNumber('numericValue')`](docs/helper.math.md)
-- [`var sign = helper.math.compare(numericValueA, numericValueB)`](docs/helper.math.md)
-- [`var answerBigNum = helper.math.add(numericValueA, numericValueB)`](docs/helper.math.md)
-- [`var answerBigNum = helper.math.subtract(numericValueA, numericValueB)`](docs/helper.math.md)
+- [`var ethAmount = helper.math.fromWei(weiAmount, toUnit)`](docs/helper.maths.md)
+- [`var weiAmount = helper.math.toWei(amount, fromUnit)`](docs/helper.maths.md)
+- [`var bigNum = helper.math.toNumber('numericValue')`](docs/helper.maths.md)
+- [`var sign = helper.math.compare(numericValueA, numericValueB)`](docs/helper.maths.md)
+- [`var answerBigNum = helper.math.add(numericValueA, numericValueB)`](docs/helper.maths.md)
+- [`var answerBigNum = helper.math.subtract(numericValueA, numericValueB)`](docs/helper.maths.md)
 
 #### Assertions
 
-- [`helper.assert.fail(message)`](docs/helper.assert.md)
-- [`helper.assert.isTrue(condition, message)`](docs/helper.assert.md)
-- [`helper.assert.equal(expectedValue, actualValue, message)`](docs/helper.assert.md)
-- [`helper.math.assertEqual(expectedNumericValue, actualNumericValue, message)`](docs/helper.assert.md)
-- [`helper.math.assertRoughlyEqual(expectedNumericValue, actualNumericValue, withinDelta, message)`](docs/helper.math.md)
-- [`helper.math.assertLessThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
-- [`helper.math.assertGreaterThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
-- [`helper.math.assertLessThanOrEqual(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
-- [`helper.math.assertGreaterThanOrEqual(actualNumericValue, comparedToNumericValue, message)`](docs/helper.math.md)
+- [`helper.assert.fail(message)`](docs/helper.assertions.md)
+- [`helper.assert.isTrue(condition, message)`](docs/helper.assertions.md)
+- [`helper.assert.equal(expectedValue, actualValue, message)`](docs/helper.assertions.md)
+- [`helper.math.assertEqual(expectedNumericValue, actualNumericValue, message)`](docs/helper.assertions.md)
+- [`helper.math.assertRoughlyEqual(expectedNumericValue, actualNumericValue, withinDelta, message)`](docs/helper.assertions.md)
+- [`helper.math.assertLessThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.assertions.md)
+- [`helper.math.assertGreaterThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.assertions.md)
+- [`helper.math.assertLessThanOrEqual(actualNumericValue, comparedToNumericValue, message)`](docs/helper.assertions.md)
+- [`helper.math.assertGreaterThanOrEqual(actualNumericValue, comparedToNumericValue, message)`](docs/helper.assertions.md)
 
 #### Waiting
 
-- [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.nextStep.md)
-- [`helper.nextStep.needsBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
-- [`helper.nextStep.needsClockTime(jsDate)`](docs/helper.nextStep.md)
-- [`helper.nextStep.needsPredicate(predicateFn)`](docs/helper.nextStep.md)
-- [`helper.backOff.untilTxnMined(txnHash)`](docs/helper.nextStep.md)
-- [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.nextStep.md)
-- [`helper.backOff.untilClockTime(jsDate)`](docs/helper.nextStep.md)
-- [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.nextStep.md)
+- [`helper.nextStep.needsBlockTime(blockTimestamp)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsClockTime(jsDate)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsPredicate(predicateFn)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.waiting.md)
+- [`helper.nextStep.needsContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
+- [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.waiting.md)
+- [`helper.backOff.untilClockTime(jsDate)`](docs/helper.waiting.md)
+- [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.waiting.md)
+- [`helper.backOff.untilTxnMined(txnHash)`](docs/helper.waiting.md)
+- [`helper.backOff.untilContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
+
+#### Debugging
+
+- [`helper.debug.log(msg, optionalArg1, optionalArg2, ...)`](docs/helper.debugging.md)
 
 ### Test Object API Index
 
@@ -392,10 +402,15 @@ Several functions accept a transaction object from you with the following proper
 
 ## Future Directions
 
-Planned but not yet implemented features include:
+Planned but not yet implemented features/fixes include:
 
+- hooking into contract objects so can wait for txns;
+- supporting solidity compiling via web3 and better solc path detection;
+- run setup and cleanup functions;
+- measuring time tests take to run (and run + test timeouts);
 - measuring code coverage (using VM traces);
 - running from browser as well as node.js;
+- err, actually writing detailed API documentation;
 - helping test javascript contract interface code that uses callbacks;
 - helping test contract "logs" (aka solidity "events");
 - (possibly) offering a hosted CI solution (a tiny bit like https://travis-ci.org/).
