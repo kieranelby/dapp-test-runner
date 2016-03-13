@@ -309,6 +309,7 @@ Use the runner object to register contracts and add tests, then to run the tests
 - [`runner.addRunSetupFunction(runSetupFunction)`](docs/runner.md)
 - [`runner.addRunCleanupFunction(runCleanupFunction)`](docs/runner.md)
 - [`runner.addTest(testObject)`](docs/runner.md)
+- [`runner.excludeCategory(category)`](docs/runner.md)
 - [`runner.run(runCompletedFunction)`](docs/runner.md)
 
 ### Results API Index
@@ -365,6 +366,7 @@ Use the helper to create Ethereum accounts and contracts, to check amounts, to s
 
 #### Waiting
 
+- [`helper.txn.getLatestBlockTime`](docs/helper.txns.md)
 - [`helper.nextStep.needsBlockTime(blockTimestamp)`](docs/helper.waiting.md)
 - [`helper.nextStep.needsClockTime(jsDate)`](docs/helper.waiting.md)
 - [`helper.nextStep.needsPredicate(predicateFn)`](docs/helper.waiting.md)
@@ -413,9 +415,10 @@ To-do - example.
 
 Planned but not yet implemented features/fixes include:
 
-- hooking into contract objects so can wait for txns;
+- better error handling and write 'troubleshooting' docs;
 - supporting solidity compiling via web3 and better solc path detection;
 - run setup and cleanup functions;
+- record assertions made and show in report;
 - measuring time tests take to run (and run + test timeouts);
 - measuring code coverage (using VM traces);
 - running from browser as well as node.js;
