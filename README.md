@@ -240,16 +240,6 @@ If you need to, you can control when the next step is allowed to start using the
 - [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.waiting.md)
 - [`helper.nextStep.needsContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
 
-It is also possible to achieve a similar effect with the helper.backOff functions - these cause the current step to stop and retry itself later:
-
-- [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.waiting.md)
-- [`helper.backOff.untilClockTime(jsDate)`](docs/helper.waiting.md)
-- [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.waiting.md)
-- [`helper.backOff.untilTxnMined(txnHash)`](docs/helper.waiting.md)
-- [`helper.backOff.untilContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
-
-Normally a call to helper.backOff should be the first line of the test step.
-
 For example, ... TODO ...
 
 You can set a time-out on a specific test by specifying a `completionTimeoutSeconds` property on the test object you pass to `runner.addTest(testObj)`.
@@ -372,11 +362,6 @@ Use the helper to create Ethereum accounts and contracts, to check amounts, to s
 - [`helper.nextStep.needsPredicate(predicateFn)`](docs/helper.waiting.md)
 - [`helper.nextStep.needsTxnMined(txnHash)`](docs/helper.waiting.md)
 - [`helper.nextStep.needsContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
-- [`helper.backOff.untilBlockTime(blockTimestamp)`](docs/helper.waiting.md)
-- [`helper.backOff.untilClockTime(jsDate)`](docs/helper.waiting.md)
-- [`helper.backOff.untilPredicate(predicateFn)`](docs/helper.waiting.md)
-- [`helper.backOff.untilTxnMined(txnHash)`](docs/helper.waiting.md)
-- [`helper.backOff.untilContractInstanceReady(contractInstance)`](docs/helper.waiting.md)
 
 #### Debugging
 
@@ -415,14 +400,17 @@ To-do - example.
 
 Planned but not yet implemented features/fixes include:
 
-- better error handling and write 'troubleshooting' docs;
-- supporting solidity compiling via web3 and better solc path detection;
-- run setup and cleanup functions;
+- consider renaming helper.txn to something else (split up?);
+- better error handling;
+- write 'troubleshooting' docs;
+- allow assertions about contract events / logs generated;
+- support solidity compiling via web3 and better solc path detection;
+- invoke runner setup and cleanup functions;
+- measure code coverage (using VM traces when they land in geth);
 - record assertions made and show in report;
-- measuring time tests take to run (and run + test timeouts);
-- measuring code coverage (using VM traces);
-- running from browser as well as node.js;
-- err, actually writing detailed API documentation;
-- helping test javascript contract interface code that uses callbacks;
-- helping test contract "logs" (aka solidity "events");
-- (possibly) offering a hosted CI solution (a tiny bit like https://travis-ci.org/).
+- measure time tests take to run (and run / test timeouts);
+- support running from browser as well as node.js;
+- support running from browser and making use of browser to show more detail about txns;
+- (possibly) support running from browser against hosted testnet back-end;
+- detailed API documentation;
+- help test javascript contract interface code that uses callbacks;
