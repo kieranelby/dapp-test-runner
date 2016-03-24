@@ -13,6 +13,10 @@ but dapp-test-runner helps you write tests for your Ethereum contracts by making
  * produce a test report you can include with your DApp to show it has been tested;
  * measure test coverage using the Ethereum Virtual Machine (coming soon!).
 
+## Status
+
+dapp-test-runner is currently in a pre-release state. The API and behaviour may change at any time.
+
 ## Requirements
 
  * node.js (for now - browser compatibility coming soon!);
@@ -322,6 +326,7 @@ Use the helper to create Ethereum accounts and contracts, to check amounts, to s
 #### Accounts
 
 - [`var address = helper.account.create()`](docs/helper.accounts.md)
+- [`var address = helper.account.createWith(weiAmount)`](docs/helper.accounts.md)
 - [`var address = helper.account.createWithJustOver(weiAmount)`](docs/helper.accounts.md)
 - [`var address = helper.account.master`](docs/helper.accounts.md)
 - [`var weiAmount = helper.account.getBalance(address)`](docs/helper.accounts.md)
@@ -329,6 +334,7 @@ Use the helper to create Ethereum accounts and contracts, to check amounts, to s
 ### Contracts and Transactions
 
 - [`var contract = helper.txn.createContractInstance(name, paramsArray, transactionObj)`](docs/helper.txns.md)
+- [`var contract = helper.txn.getRegisteredContractInstanceAt(name, address)`](docs/helper.txns.md)
 - [`var txnHash = helper.txn.send(transactionObj)`](docs/helper.txns.md)
 - [`helper.txn.rawWeb3`](docs/helper.txns.md)
 - [`helper.txn.recordOtherTransaction(txnHash)`](docs/helper.txns.md)
@@ -347,7 +353,9 @@ Use the helper to create Ethereum accounts and contracts, to check amounts, to s
 - [`helper.assert.fail(message)`](docs/helper.assertions.md)
 - [`helper.assert.isTrue(condition, message)`](docs/helper.assertions.md)
 - [`helper.assert.equal(expectedValue, actualValue, message)`](docs/helper.assertions.md)
+- [`helper.assert.notEqual(notExpectedValue, actualValue, message)`](docs/helper.assertions.md)
 - [`helper.math.assertEqual(expectedNumericValue, actualNumericValue, message)`](docs/helper.assertions.md)
+- [`helper.math.assertNotEqual(notExpectedNumericValue, actualNumericValue, message)`](docs/helper.assertions.md)
 - [`helper.math.assertRoughlyEqual(expectedNumericValue, actualNumericValue, withinDelta, message)`](docs/helper.assertions.md)
 - [`helper.math.assertLessThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.assertions.md)
 - [`helper.math.assertGreaterThan(actualNumericValue, comparedToNumericValue, message)`](docs/helper.assertions.md)
@@ -401,6 +409,7 @@ To-do - example.
 Planned but not yet implemented features/fixes include:
 
 - consider renaming helper.txn to something else (split up?);
+- decide on calling convention for e.g. createContractInstance - array or vargs?
 - better error handling;
 - write 'troubleshooting' docs;
 - allow assertions about contract events / logs generated;
