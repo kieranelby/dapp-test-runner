@@ -413,6 +413,7 @@ Planned but not yet implemented features/fixes include:
 - better error handling;
 - write 'troubleshooting' docs;
 - allow assertions about contract events / logs generated;
+- multiple ethererum node support;
 - support solidity compiling via web3 and better solc path detection;
 - invoke runner setup and cleanup functions;
 - measure code coverage (using VM traces when they land in geth);
@@ -423,3 +424,4 @@ Planned but not yet implemented features/fixes include:
 - (possibly) support running from browser against hosted testnet back-end;
 - detailed API documentation;
 - help test javascript contract interface code that uses callbacks;
+- more help with the front-end side of testing;
