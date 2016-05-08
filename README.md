@@ -8,6 +8,7 @@ but dapp-test-runner helps you write tests for your Ethereum contracts by making
  * keep tests independent by creating fresh contract instances and test accounts;
  * wait for transactions from one test step to be mined before starting the next step of the test (without getting into callback hell);
  * run multiple tests in parallel (a big speed-up since waiting for blocks can take a while);
+ * invoke a contract from several Ethereum nodes at once;
  * perform artihmetic and assertions about Wei amounts;
  * create test accounts, send ether to them, and automatically sweep the ether back again afterwards;
  * produce a test report you can include with your DApp to show it has been tested;
